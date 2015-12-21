@@ -31,6 +31,10 @@ deploy:
     tags: true
     all_branches: true
     repo: zitsen/unqlite-sys.rs
+
+after_deploy:
+  - cargo publish --token "$CRATESIO_TOKEN"
+
 env:
   global:
   - secure: VbLfHRPv/jTnGWiUjwK/s9AmHvNH6cEUcUjJP8kv8OLwkLhfykZS+kjHPH1PsKC2MU26PJ6jHRGX+zMuvYxLzZ87F1cC6x+afkvTfNlCEWqbSmZ2g51zxh9iX1rDeLQsi6EPcDedl1Q+DblacKLSB25kd8bGCKaZUAjG2E0qXT0W4eeWXRHu4izZYGscRTWElI03BGq4bvu6V92XlPekFi4gdQzs5cbIUnV0XMLE5IXF7Rv5Ln67QY6HQ2paX25qBNzgRmnwn+Ozwzq3IJl1JvK7hP6UTgB7RyUH7vJykE81jrCJn3uL68GjO9Cu22IJb7MKhF3rVOOUatxoqj45CyveOSzwbP/X/SmZUjeN21jP8/fveVVODo0bJInmrLoh0oAi7VkS9tOXXhB2w5nHxDDFAKrU+7rOBvpMx+Pwby42qWsC3pTCPxnT8KeQv6FLRVqdcG+AHYTAlzC7UVF0RUlHmJrDl4CT5V0thmlVoi693WlxVsFkrQFeWcoMFqZzoiEdcB7BYW6Q3NoyXP13KKUfLXSz+l/7FBlBw7fPrEUGhNrKt6CV/6CkKj8MJBXe62myxZ+zBrTIpI9LHCAuQ2V5t3fwyAbPoM0Cz2mQ0UXcmolUSVTlSHOoW29Bwev9GTJTlzsydbmOuPQKucIWzYIkqT46mWiqekn8EnTUrZ8=
