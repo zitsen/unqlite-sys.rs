@@ -5,11 +5,11 @@ authors = ["Huo Linhe <huolinhe@berrygenomics.com>"]
 build = "build.rs"
 license = "MIT"
 readme  = "README.md"
-homepage = "https://github.com/zitsen/unqlite.rs"
-repository = "https://github.com/zitsen/unqlite.rs.git"
-documentation = "http://zitsen.github.io/unqlite.rs/unqlite-sys/index.html"
+homepage = "https://github.com/zitsen/unqlite-sys.rs"
+repository = "https://github.com/zitsen/unqlite-sys.rs.git"
+documentation = "http://zitsen.github.io/unqlite-sys.rs/unqlite-sys/index.html"
 description = "Rust `unqlite` bindings."
-keywords = ["unqlite", "kv", "nosql"]
+keywords = ["unqlite", "kv", "nosql", "binding"]
 
 [dependencies]
 libc = "0.2.4"
