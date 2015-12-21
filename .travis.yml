@@ -4,8 +4,10 @@ rust:
   - nightly
   - beta
   - stable
+
 before_script:
-  - pip install ''travis-cargo<0.2'' --user
+  - pip install 'travis-cargo<0.2' --user
+
 script:
   - cargo build --verbose
   - cargo build --release
