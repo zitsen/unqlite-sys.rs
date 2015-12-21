@@ -1,38 +1,3 @@
-/// The UNQLITE_VERSION C preprocessor macroevaluates to a string literal
-/// that is the unqlite version in the format "X.Y.Z" where X is the major
-/// version number and Y is the minor version number and Z is the release
-/// number.
-///
-pub const UNQLITE_VERSION: &'static str = "1.1.6";
-
-pub const UNQLITE_VERSION_NUMBER: ::libc::c_int = 1001006;
-
-/// The UNQLITE_SIG C preprocessor macro evaluates to a string
-/// literal which is the public signature of the unqlite engine.
-/// This signature could be included for example in a host-application
-/// generated Server MIME header as follows:
-///
-/// ```mime
-///    Server: YourWebServer/x.x unqlite/x.x.x \r\n
-/// ```
-pub const UNQLITE_SIG: &'static str = "unqlite/1.1.6";
-
-// UnQLite identification in the Symisc source tree:
-// Each particular check-in of a particular software released
-// by symisc systems have an unique identifier associated with it.
-// This macro hold the one associated with unqlite.
-//
-pub const UNQLITE_IDENT: &'static str = "unqlite:b172a1e2c3f62fb35c8e1fb2795121f82356cad6";
-// Copyright notice.
-// If you have any questions about the licensing situation, please
-// visit http://unqlite.org/licensing.html
-// or contact Symisc Systems via:
-//   legal@symisc.net
-//   licensing@symisc.net
-//   contact@symisc.net
-//
-pub const UNQLITE_COPYRIGHT: &'static str = "Copyright (C) Symisc Systems, S.U.A.R.L [Mrad Chems Eddine <chm@symisc.net>] 2012-2013, http://unqlite.org/";
-
 // Standard return values from Symisc public interfaces
 pub const SXRET_OK: ::libc::c_int = 0;      /* Not an error */
 pub const SXERR_MEM: ::libc::c_int = (-1); /* Out of memory */
