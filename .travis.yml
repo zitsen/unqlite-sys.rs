@@ -1,27 +1,24 @@
 sudo: false
 language: rust
 rust:
-- nightly
-- beta
-- stable
+  - nightly
+  - beta
+  - stable
 before_script:
-- ! 'pip install ''travis-cargo<0.2'' --user
-
-'
+  - pip install ''travis-cargo<0.2'' --user
 script:
-- ! 'cargo build &&
+  - cargo build --verbose
+  - cargo build --release
+  - cargo test
+  - travis-cargo --only stable doc --
+  - cargo build --no-default-features
 
-  cargo test &&
-
-  travis-cargo --only stable doc -- &&
-
-  cargo build --no-default-features
-
-'
 after_success:
-- ! 'travis-cargo --only stable doc-upload
+  - travis-cargo --only stable doc-upload
 
-'
+before_deploy:
+  - cargo package --verbose
+
 deploy:
   provider: releases
   api_key:
@@ -31,6 +28,7 @@ deploy:
     tags: true
     all_branches: true
     repo: zitsen/unqlite-sys.rs
+    condition: "$TRAVIS_RUST_VERSION = stable"
 
 after_deploy:
   - cargo publish --token "$CRATESIO_TOKEN"
