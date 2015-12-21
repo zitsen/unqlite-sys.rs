@@ -7,7 +7,7 @@ license = "MIT"
 readme  = "README.md"
 homepage = "https://github.com/zitsen/unqlite-sys.rs"
 repository = "https://github.com/zitsen/unqlite-sys.rs.git"
-documentation = "http://zitsen.github.io/unqlite-sys.rs/unqlite-sys/index.html"
+documentation = "http://zitsen.github.io/unqlite-sys.rs"
 description = "Rust `unqlite` bindings."
 keywords = ["unqlite", "kv", "nosql", "binding"]
 
