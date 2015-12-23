@@ -24,6 +24,6 @@ default = []
 enable-threads = []
 # Options To Omit/Enable Features
 jx9-disable-builtin-func = []
-jx9-enable-math-fuc = []
+jx9-enable-math-func = []
 jx9-disable-disk-io = []
 enable-jx9-hash-io = []
