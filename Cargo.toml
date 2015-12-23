@@ -16,5 +16,14 @@ libc = "0.2.4"
 
 [build-dependencies]
 gcc = "0.3.21"
-pkg-config = "0.3.6"
 
+[features]
+# no features by default
+default = []
+# UNQLITE_ENABLE_THREADS
+enable-threads = []
+# Options To Omit/Enable Features
+jx9-disable-builtin-func = []
+jx9-enable-math-fuc = []
+jx9-disable-disk-io = []
+enable-jx9-hash-io = []
