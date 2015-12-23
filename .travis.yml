@@ -12,6 +12,7 @@ script:
   - cargo build --verbose
   - cargo build --release
   - cargo test
+  - cargo test --features enable-threads
   - travis-cargo --only stable doc --
   - cargo build --no-default-features
 
