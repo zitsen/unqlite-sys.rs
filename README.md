@@ -27,9 +27,10 @@ just config in `Cargo.toml`:
 
 ```toml
 [dependencies.unqlite-sys]
-version = 0.3.0
+version = "0.3.0"
 features = [ "enable-threads" ]
 ```
+
 For multiple features just add them in toml `features` array.
 
 ## Threadsafe
