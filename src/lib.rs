@@ -79,21 +79,20 @@
 //! [docs]: https://zitsen.github.io/unqlite-sys.rs
 //! [license-badge]: https://img.shields.io/crates/l/unqlite-sys.svg?style=flat-square
 //! [apidoc-compile]: http://unqlite.org/c_api_const.html#compile_time
+
+#[allow(dead_code)]
 pub mod constants;
 
 pub use self::bindgen::*;
 
 #[allow(dead_code, non_snake_case, non_camel_case_types)]
+#[cfg_attr(rustfmt, rustfmt_skip)]
 mod bindgen;
 
 #[cfg(test)]
 mod tests {
-    use super::{
-        unqlite_lib_config,
-        unqlite_lib_init,
-        unqlite_lib_is_threadsafe,
-        unqlite_lib_shutdown
-    };
+    use super::{unqlite_lib_config, unqlite_lib_init, unqlite_lib_is_threadsafe,
+                unqlite_lib_shutdown};
     use super::constants as ffic;
 
     #[cfg(feature = "enable-threads")]
