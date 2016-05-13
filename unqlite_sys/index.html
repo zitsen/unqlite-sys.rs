@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `unqlite_sys` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, unqlite_sys">
+
+    <title>unqlite_sys - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'unqlite_sys', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>unqlite_sys</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-0' class='srclink' href='../src/unqlite_sys/src/lib.rs.html#1-132' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Rust bindings for <a href="http://unqlite.org">UnQlite</a> library.</p>
+
+<p><a href="https://travis-ci.org/zitsen/unqlite-sys.rs"><img src="https://img.shields.io/travis/zitsen/unqlite-sys.rs.svg?style=flat-square" alt="travis-badge"></a> <a href="https://crates.io/crates/unqlite-sys"><img src="https://img.shields.io/crates/v/unqlite-sys.svg?style=flat-square" alt="release-badge"></a> <a href="https://crates.io/crates/unqlite-sys"><img src="https://img.shields.io/crates/d/unqlite-sys.svg?style=flat-square" alt="downloads"></a>
+<a href="https://zitsen.github.io/unqlite-sys.rs"><img src="https://img.shields.io/badge/API-docs-blue.svg?style=flat-square" alt="docs-badge"></a> <a href="https://crates.io/crates/unqlite-sys"><img src="https://img.shields.io/crates/l/unqlite-sys.svg?style=flat-square" alt="license-badge"></a></p>
+
+<p>As its official site says, <strong>UnQlite</strong> is</p>
+
+<blockquote>
+<p>An Embeddable NoSQL Database Engine.</p>
+</blockquote>
+
+<p>Please see <a href="http://unqlite.org/c_api.html">UnQLite C/C++ API Reference</a> for full API documents.</p>
+
+<h1 id='usage' class='section-header'><a href='#usage'>Usage</a></h1>
+<p>This crate provides several features for <a href="http://unqlite.org/c_api_const.html#compile_time">UnQlite compile-time
+options</a>:</p>
+
+<ul>
+<li><strong>enable-threads</strong>: equivalent to <code>UNQLITE_ENABLE_THREADS</code> enabled.</li>
+<li><strong>jx9-disable-builtin-func</strong>: equivalent to <code>JX9_DISABLE_BUILTIN_FUNC</code> enabled.</li>
+<li><strong>jx9-enable-math-fuc</strong>: equivalent to <code>JX9_ENABLE_MATH_FUNC</code> enabled.</li>
+<li><strong>jx9-disable-disk-io</strong>: equivalent to <code>JX9_DISABLE_DISK_IO</code> enabled.</li>
+<li><strong>enable-jx9-hash-io</strong>: equivalent to <code>UNQLITE_ENABLE_JX9_HASH_IO</code> enabled.</li>
+</ul>
+
+<p>To provide the same default behavior as original C does, non of the features
+is enabled by default. When you want some features, such as <strong>enable-threads</strong>,
+just config in <code>Cargo.toml</code>:</p>
+
+<pre><code class="language-toml">[dependencies.unqlite-sys]
+version = &quot;0.3&quot;
+features = [ &quot;enable-threads&quot; ]
+</code></pre>
+
+<p>For multiple features just add them in toml <code>features</code> array.</p>
+
+<h1 id='threadsafe' class='section-header'><a href='#threadsafe'>Threadsafe</a></h1>
+<p>Note that even &quot;enable-threads&quot; is featured in your crate, it&#39;s not meant
+that your code is threadsafe.</p>
+
+<blockquote>
+<p>When UnQLite has been compiled with threading support then the threading mode can be altered
+at run-time using the unqlite_lib_config() interface together with one of these verbs:</p>
+
+<blockquote>
+<p>UNQLITE_LIB_CONFIG_THREAD_LEVEL_SINGLE</p>
+
+<p>UNQLITE_LIB_CONFIG_THREAD_LEVEL_MULTI</p>
+</blockquote>
+
+<p>Platforms others than Windows and UNIX systems must install their own mutex subsystem via
+unqlite_lib_config() with a configuration verb set to UNQLITE_LIB_CONFIG_USER_MUTEX. Otherwise
+the library is not threadsafe.</p>
+
+<p>Note that you must link UnQLite with the POSIX threads library under UNIX systems (i.e:
+-lpthread).</p>
+</blockquote>
+
+<p>To use in multithread cases, that is <strong>threadsafe</strong>, you may use like this:</p>
+
+<pre class='rust rust-example-rendered'>
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>unqlite_sys</span> <span class='kw'>as</span> <span class='ident'>ffi</span>;
+<span class='kw'>use</span> <span class='ident'>ffi</span>::<span class='ident'>constants</span> <span class='kw'>as</span> <span class='ident'>ffic</span>;
+
+<span class='kw'>fn</span> <span class='ident'>main</span>() {
+    <span class='kw'>unsafe</span> {
+        <span class='ident'>ffi</span>::<span class='ident'>unqlite_lib_config</span>(<span class='ident'>ffic</span>::<span class='ident'>UNQLITE_LIB_CONFIG_THREAD_LEVEL_MULTI</span>);
+        <span class='ident'>ffi</span>::<span class='ident'>unqlite_lib_init</span>();
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>ffi</span>::<span class='ident'>unqlite_lib_is_threadsafe</span>(), <span class='number'>1</span>);
+
+        <span class='comment'>// do stuff ...</span>
+
+    }
+}</pre>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='constants/index.html'
+                               title='unqlite_sys::constants'>constants</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_SyMemMethods.html'
+                               title='unqlite_sys::Struct_SyMemMethods'>Struct_SyMemMethods</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_SyMutexMethods.html'
+                               title='unqlite_sys::Struct_SyMutexMethods'>Struct_SyMutexMethods</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_SyString.html'
+                               title='unqlite_sys::Struct_SyString'>Struct_SyString</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_Sytm.html'
+                               title='unqlite_sys::Struct_Sytm'>Struct_Sytm</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct___va_list_tag.html'
+                               title='unqlite_sys::Struct___va_list_tag'>Struct___va_list_tag</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_syiovec.html'
+                               title='unqlite_sys::Struct_syiovec'>Struct_syiovec</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_unqlite_file.html'
+                               title='unqlite_sys::Struct_unqlite_file'>Struct_unqlite_file</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_unqlite_io_methods.html'
+                               title='unqlite_sys::Struct_unqlite_io_methods'>Struct_unqlite_io_methods</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_unqlite_kv_cursor.html'
+                               title='unqlite_sys::Struct_unqlite_kv_cursor'>Struct_unqlite_kv_cursor</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_unqlite_kv_engine.html'
+                               title='unqlite_sys::Struct_unqlite_kv_engine'>Struct_unqlite_kv_engine</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_unqlite_kv_io.html'
+                               title='unqlite_sys::Struct_unqlite_kv_io'>Struct_unqlite_kv_io</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_unqlite_kv_methods.html'
+                               title='unqlite_sys::Struct_unqlite_kv_methods'>Struct_unqlite_kv_methods</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_unqlite_page.html'
+                               title='unqlite_sys::Struct_unqlite_page'>Struct_unqlite_page</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Struct_unqlite_vfs.html'
+                               title='unqlite_sys::Struct_unqlite_vfs'>Struct_unqlite_vfs</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Struct_SyMutex.html'
+                               title='unqlite_sys::Struct_SyMutex'>Struct_SyMutex</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Struct_jx9_context.html'
+                               title='unqlite_sys::Struct_jx9_context'>Struct_jx9_context</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Struct_jx9_io_stream.html'
+                               title='unqlite_sys::Struct_jx9_io_stream'>Struct_jx9_io_stream</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Struct_jx9_value.html'
+                               title='unqlite_sys::Struct_jx9_value'>Struct_jx9_value</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Struct_unqlite.html'
+                               title='unqlite_sys::Struct_unqlite'>Struct_unqlite</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Struct_unqlite_vm.html'
+                               title='unqlite_sys::Struct_unqlite_vm'>Struct_unqlite_vm</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_array_add_elem.html'
+                               title='unqlite_sys::unqlite_array_add_elem'>unqlite_array_add_elem</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_array_add_strkey_elem.html'
+                               title='unqlite_sys::unqlite_array_add_strkey_elem'>unqlite_array_add_strkey_elem</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_array_count.html'
+                               title='unqlite_sys::unqlite_array_count'>unqlite_array_count</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_array_fetch.html'
+                               title='unqlite_sys::unqlite_array_fetch'>unqlite_array_fetch</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_array_walk.html'
+                               title='unqlite_sys::unqlite_array_walk'>unqlite_array_walk</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_begin.html'
+                               title='unqlite_sys::unqlite_begin'>unqlite_begin</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_close.html'
+                               title='unqlite_sys::unqlite_close'>unqlite_close</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_commit.html'
+                               title='unqlite_sys::unqlite_commit'>unqlite_commit</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_compile.html'
+                               title='unqlite_sys::unqlite_compile'>unqlite_compile</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_compile_file.html'
+                               title='unqlite_sys::unqlite_compile_file'>unqlite_compile_file</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_config.html'
+                               title='unqlite_sys::unqlite_config'>unqlite_config</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_alloc_chunk.html'
+                               title='unqlite_sys::unqlite_context_alloc_chunk'>unqlite_context_alloc_chunk</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_free_chunk.html'
+                               title='unqlite_sys::unqlite_context_free_chunk'>unqlite_context_free_chunk</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_new_array.html'
+                               title='unqlite_sys::unqlite_context_new_array'>unqlite_context_new_array</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_new_scalar.html'
+                               title='unqlite_sys::unqlite_context_new_scalar'>unqlite_context_new_scalar</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_output.html'
+                               title='unqlite_sys::unqlite_context_output'>unqlite_context_output</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_output_format.html'
+                               title='unqlite_sys::unqlite_context_output_format'>unqlite_context_output_format</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_peek_aux_data.html'
+                               title='unqlite_sys::unqlite_context_peek_aux_data'>unqlite_context_peek_aux_data</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_push_aux_data.html'
+                               title='unqlite_sys::unqlite_context_push_aux_data'>unqlite_context_push_aux_data</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_random_num.html'
+                               title='unqlite_sys::unqlite_context_random_num'>unqlite_context_random_num</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_random_string.html'
+                               title='unqlite_sys::unqlite_context_random_string'>unqlite_context_random_string</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_realloc_chunk.html'
+                               title='unqlite_sys::unqlite_context_realloc_chunk'>unqlite_context_realloc_chunk</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_release_value.html'
+                               title='unqlite_sys::unqlite_context_release_value'>unqlite_context_release_value</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_result_buf_length.html'
+                               title='unqlite_sys::unqlite_context_result_buf_length'>unqlite_context_result_buf_length</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_throw_error.html'
+                               title='unqlite_sys::unqlite_context_throw_error'>unqlite_context_throw_error</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_throw_error_format.html'
+                               title='unqlite_sys::unqlite_context_throw_error_format'>unqlite_context_throw_error_format</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_context_user_data.html'
+                               title='unqlite_sys::unqlite_context_user_data'>unqlite_context_user_data</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_create_constant.html'
+                               title='unqlite_sys::unqlite_create_constant'>unqlite_create_constant</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_create_function.html'
+                               title='unqlite_sys::unqlite_create_function'>unqlite_create_function</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_delete_constant.html'
+                               title='unqlite_sys::unqlite_delete_constant'>unqlite_delete_constant</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_delete_function.html'
+                               title='unqlite_sys::unqlite_delete_function'>unqlite_delete_function</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_function_name.html'
+                               title='unqlite_sys::unqlite_function_name'>unqlite_function_name</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_append.html'
+                               title='unqlite_sys::unqlite_kv_append'>unqlite_kv_append</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_append_fmt.html'
+                               title='unqlite_sys::unqlite_kv_append_fmt'>unqlite_kv_append_fmt</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_config.html'
+                               title='unqlite_sys::unqlite_kv_config'>unqlite_kv_config</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_data.html'
+                               title='unqlite_sys::unqlite_kv_cursor_data'>unqlite_kv_cursor_data</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_data_callback.html'
+                               title='unqlite_sys::unqlite_kv_cursor_data_callback'>unqlite_kv_cursor_data_callback</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_delete_entry.html'
+                               title='unqlite_sys::unqlite_kv_cursor_delete_entry'>unqlite_kv_cursor_delete_entry</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_first_entry.html'
+                               title='unqlite_sys::unqlite_kv_cursor_first_entry'>unqlite_kv_cursor_first_entry</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_init.html'
+                               title='unqlite_sys::unqlite_kv_cursor_init'>unqlite_kv_cursor_init</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_key.html'
+                               title='unqlite_sys::unqlite_kv_cursor_key'>unqlite_kv_cursor_key</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_key_callback.html'
+                               title='unqlite_sys::unqlite_kv_cursor_key_callback'>unqlite_kv_cursor_key_callback</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_last_entry.html'
+                               title='unqlite_sys::unqlite_kv_cursor_last_entry'>unqlite_kv_cursor_last_entry</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_next_entry.html'
+                               title='unqlite_sys::unqlite_kv_cursor_next_entry'>unqlite_kv_cursor_next_entry</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_prev_entry.html'
+                               title='unqlite_sys::unqlite_kv_cursor_prev_entry'>unqlite_kv_cursor_prev_entry</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_release.html'
+                               title='unqlite_sys::unqlite_kv_cursor_release'>unqlite_kv_cursor_release</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_reset.html'
+                               title='unqlite_sys::unqlite_kv_cursor_reset'>unqlite_kv_cursor_reset</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_seek.html'
+                               title='unqlite_sys::unqlite_kv_cursor_seek'>unqlite_kv_cursor_seek</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_cursor_valid_entry.html'
+                               title='unqlite_sys::unqlite_kv_cursor_valid_entry'>unqlite_kv_cursor_valid_entry</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_delete.html'
+                               title='unqlite_sys::unqlite_kv_delete'>unqlite_kv_delete</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_fetch.html'
+                               title='unqlite_sys::unqlite_kv_fetch'>unqlite_kv_fetch</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_fetch_callback.html'
+                               title='unqlite_sys::unqlite_kv_fetch_callback'>unqlite_kv_fetch_callback</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_store.html'
+                               title='unqlite_sys::unqlite_kv_store'>unqlite_kv_store</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_kv_store_fmt.html'
+                               title='unqlite_sys::unqlite_kv_store_fmt'>unqlite_kv_store_fmt</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_lib_config.html'
+                               title='unqlite_sys::unqlite_lib_config'>unqlite_lib_config</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_lib_copyright.html'
+                               title='unqlite_sys::unqlite_lib_copyright'>unqlite_lib_copyright</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_lib_ident.html'
+                               title='unqlite_sys::unqlite_lib_ident'>unqlite_lib_ident</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_lib_init.html'
+                               title='unqlite_sys::unqlite_lib_init'>unqlite_lib_init</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_lib_is_threadsafe.html'
+                               title='unqlite_sys::unqlite_lib_is_threadsafe'>unqlite_lib_is_threadsafe</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_lib_shutdown.html'
+                               title='unqlite_sys::unqlite_lib_shutdown'>unqlite_lib_shutdown</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_lib_signature.html'
+                               title='unqlite_sys::unqlite_lib_signature'>unqlite_lib_signature</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_lib_version.html'
+                               title='unqlite_sys::unqlite_lib_version'>unqlite_lib_version</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_open.html'
+                               title='unqlite_sys::unqlite_open'>unqlite_open</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_bool.html'
+                               title='unqlite_sys::unqlite_result_bool'>unqlite_result_bool</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_double.html'
+                               title='unqlite_sys::unqlite_result_double'>unqlite_result_double</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_int.html'
+                               title='unqlite_sys::unqlite_result_int'>unqlite_result_int</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_int64.html'
+                               title='unqlite_sys::unqlite_result_int64'>unqlite_result_int64</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_null.html'
+                               title='unqlite_sys::unqlite_result_null'>unqlite_result_null</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_resource.html'
+                               title='unqlite_sys::unqlite_result_resource'>unqlite_result_resource</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_string.html'
+                               title='unqlite_sys::unqlite_result_string'>unqlite_result_string</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_string_format.html'
+                               title='unqlite_sys::unqlite_result_string_format'>unqlite_result_string_format</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_result_value.html'
+                               title='unqlite_sys::unqlite_result_value'>unqlite_result_value</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_rollback.html'
+                               title='unqlite_sys::unqlite_rollback'>unqlite_rollback</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_util_load_mmaped_file.html'
+                               title='unqlite_sys::unqlite_util_load_mmaped_file'>unqlite_util_load_mmaped_file</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_util_random_num.html'
+                               title='unqlite_sys::unqlite_util_random_num'>unqlite_util_random_num</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_util_random_string.html'
+                               title='unqlite_sys::unqlite_util_random_string'>unqlite_util_random_string</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_util_release_mmaped_file.html'
+                               title='unqlite_sys::unqlite_util_release_mmaped_file'>unqlite_util_release_mmaped_file</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_bool.html'
+                               title='unqlite_sys::unqlite_value_bool'>unqlite_value_bool</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_compare.html'
+                               title='unqlite_sys::unqlite_value_compare'>unqlite_value_compare</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_double.html'
+                               title='unqlite_sys::unqlite_value_double'>unqlite_value_double</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_int.html'
+                               title='unqlite_sys::unqlite_value_int'>unqlite_value_int</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_int64.html'
+                               title='unqlite_sys::unqlite_value_int64'>unqlite_value_int64</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_bool.html'
+                               title='unqlite_sys::unqlite_value_is_bool'>unqlite_value_is_bool</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_callable.html'
+                               title='unqlite_sys::unqlite_value_is_callable'>unqlite_value_is_callable</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_empty.html'
+                               title='unqlite_sys::unqlite_value_is_empty'>unqlite_value_is_empty</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_float.html'
+                               title='unqlite_sys::unqlite_value_is_float'>unqlite_value_is_float</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_int.html'
+                               title='unqlite_sys::unqlite_value_is_int'>unqlite_value_is_int</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_json_array.html'
+                               title='unqlite_sys::unqlite_value_is_json_array'>unqlite_value_is_json_array</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_json_object.html'
+                               title='unqlite_sys::unqlite_value_is_json_object'>unqlite_value_is_json_object</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_null.html'
+                               title='unqlite_sys::unqlite_value_is_null'>unqlite_value_is_null</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_numeric.html'
+                               title='unqlite_sys::unqlite_value_is_numeric'>unqlite_value_is_numeric</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_resource.html'
+                               title='unqlite_sys::unqlite_value_is_resource'>unqlite_value_is_resource</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_scalar.html'
+                               title='unqlite_sys::unqlite_value_is_scalar'>unqlite_value_is_scalar</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_is_string.html'
+                               title='unqlite_sys::unqlite_value_is_string'>unqlite_value_is_string</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_null.html'
+                               title='unqlite_sys::unqlite_value_null'>unqlite_value_null</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_release.html'
+                               title='unqlite_sys::unqlite_value_release'>unqlite_value_release</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_reset_string_cursor.html'
+                               title='unqlite_sys::unqlite_value_reset_string_cursor'>unqlite_value_reset_string_cursor</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_resource.html'
+                               title='unqlite_sys::unqlite_value_resource'>unqlite_value_resource</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_string.html'
+                               title='unqlite_sys::unqlite_value_string'>unqlite_value_string</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_string_format.html'
+                               title='unqlite_sys::unqlite_value_string_format'>unqlite_value_string_format</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_to_bool.html'
+                               title='unqlite_sys::unqlite_value_to_bool'>unqlite_value_to_bool</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_to_double.html'
+                               title='unqlite_sys::unqlite_value_to_double'>unqlite_value_to_double</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_to_int.html'
+                               title='unqlite_sys::unqlite_value_to_int'>unqlite_value_to_int</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_to_int64.html'
+                               title='unqlite_sys::unqlite_value_to_int64'>unqlite_value_to_int64</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_to_resource.html'
+                               title='unqlite_sys::unqlite_value_to_resource'>unqlite_value_to_resource</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_value_to_string.html'
+                               title='unqlite_sys::unqlite_value_to_string'>unqlite_value_to_string</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_config.html'
+                               title='unqlite_sys::unqlite_vm_config'>unqlite_vm_config</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_dump.html'
+                               title='unqlite_sys::unqlite_vm_dump'>unqlite_vm_dump</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_exec.html'
+                               title='unqlite_sys::unqlite_vm_exec'>unqlite_vm_exec</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_extract_variable.html'
+                               title='unqlite_sys::unqlite_vm_extract_variable'>unqlite_vm_extract_variable</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_new_array.html'
+                               title='unqlite_sys::unqlite_vm_new_array'>unqlite_vm_new_array</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_new_scalar.html'
+                               title='unqlite_sys::unqlite_vm_new_scalar'>unqlite_vm_new_scalar</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_release.html'
+                               title='unqlite_sys::unqlite_vm_release'>unqlite_vm_release</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_release_value.html'
+                               title='unqlite_sys::unqlite_vm_release_value'>unqlite_vm_release_value</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.unqlite_vm_reset.html'
+                               title='unqlite_sys::unqlite_vm_reset'>unqlite_vm_reset</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                </table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.ProcConsumer.html'
+                               title='unqlite_sys::ProcConsumer'>ProcConsumer</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.ProcMemError.html'
+                               title='unqlite_sys::ProcMemError'>ProcMemError</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.SyMemMethods.html'
+                               title='unqlite_sys::SyMemMethods'>SyMemMethods</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.SyMutex.html'
+                               title='unqlite_sys::SyMutex'>SyMutex</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.SyMutexMethods.html'
+                               title='unqlite_sys::SyMutexMethods'>SyMutexMethods</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.SyString.html'
+                               title='unqlite_sys::SyString'>SyString</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.Sytm.html'
+                               title='unqlite_sys::Sytm'>Sytm</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.__builtin_va_list.html'
+                               title='unqlite_sys::__builtin_va_list'>__builtin_va_list</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.__gnuc_va_list.html'
+                               title='unqlite_sys::__gnuc_va_list'>__gnuc_va_list</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.__int128_t.html'
+                               title='unqlite_sys::__int128_t'>__int128_t</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.__uint128_t.html'
+                               title='unqlite_sys::__uint128_t'>__uint128_t</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.__va_list_tag.html'
+                               title='unqlite_sys::__va_list_tag'>__va_list_tag</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.pgno.html'
+                               title='unqlite_sys::pgno'>pgno</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.sxi64.html'
+                               title='unqlite_sys::sxi64'>sxi64</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.sxu64.html'
+                               title='unqlite_sys::sxu64'>sxu64</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.syiovec.html'
+                               title='unqlite_sys::syiovec'>syiovec</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite.html'
+                               title='unqlite_sys::unqlite'>unqlite</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_context.html'
+                               title='unqlite_sys::unqlite_context'>unqlite_context</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_file.html'
+                               title='unqlite_sys::unqlite_file'>unqlite_file</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_int64.html'
+                               title='unqlite_sys::unqlite_int64'>unqlite_int64</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_io_methods.html'
+                               title='unqlite_sys::unqlite_io_methods'>unqlite_io_methods</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_io_stream.html'
+                               title='unqlite_sys::unqlite_io_stream'>unqlite_io_stream</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_kv_cursor.html'
+                               title='unqlite_sys::unqlite_kv_cursor'>unqlite_kv_cursor</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_kv_engine.html'
+                               title='unqlite_sys::unqlite_kv_engine'>unqlite_kv_engine</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_kv_handle.html'
+                               title='unqlite_sys::unqlite_kv_handle'>unqlite_kv_handle</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_kv_io.html'
+                               title='unqlite_sys::unqlite_kv_io'>unqlite_kv_io</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_kv_methods.html'
+                               title='unqlite_sys::unqlite_kv_methods'>unqlite_kv_methods</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_page.html'
+                               title='unqlite_sys::unqlite_page'>unqlite_page</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_real.html'
+                               title='unqlite_sys::unqlite_real'>unqlite_real</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_value.html'
+                               title='unqlite_sys::unqlite_value'>unqlite_value</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_vfs.html'
+                               title='unqlite_sys::unqlite_vfs'>unqlite_vfs</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.unqlite_vm.html'
+                               title='unqlite_sys::unqlite_vm'>unqlite_vm</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.va_list.html'
+                               title='unqlite_sys::va_list'>va_list</a></td>
+                        <td class='docblock short'>
+                             
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "unqlite_sys";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
