@@ -12,7 +12,6 @@ description = "Rust `unqlite` bindings."
 keywords = ["unqlite", "kv", "nosql", "binding"]
 
 [dependencies]
-libc = "^0.2"
 
 [build-dependencies]
 gcc = "^0.3"

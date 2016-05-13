@@ -79,8 +79,6 @@
 //! [docs]: https://zitsen.github.io/unqlite-sys.rs
 //! [license-badge]: https://img.shields.io/crates/l/unqlite-sys.svg?style=flat-square
 //! [apidoc-compile]: http://unqlite.org/c_api_const.html#compile_time
-extern crate libc;
-
 pub mod constants;
 
 pub use self::bindgen::*;
