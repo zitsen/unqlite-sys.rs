@@ -1,3 +1,13 @@
+<a name="v1.1.0"></a>
+## v1.1.0 (2017-06-12)
+
+
+#### Features
+
+* **native:**  update native unqlite source to 1.1.7 ([978df9cd](978df9cd))
+
+
+
 <a name="v1.0.0"></a>
 ## v1.0.0 (2016-05-13)
 
